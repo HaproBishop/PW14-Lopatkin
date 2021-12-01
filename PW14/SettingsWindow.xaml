@@ -1,0 +1,19 @@
+﻿<Window x:Class="PW13.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PW13"
+        mc:Ignorable="d"
+        Title="Настройки" Height="217.811" Width="237.734" ResizeMode="NoResize" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" WindowStyle="SingleBorderWindow">
+    <Grid>
+        <CheckBox x:Name="TryTip" Content="Показывать снова подсказку" IsChecked="True" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" ToolTip="Разрешает показ подсказок при запуске окна (если стоит галочка). Отключение - ее снятие." Click="TryTip_Click"/>
+        <Label Content="Количество строк:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,36,0,0"/>
+        <TextBox x:Name="RowLength" Width="37" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="171,42,0,0" MaxLength="2" PreviewTextInput="RowLength_PreviewTextInput" TextChanged="RowLength_TextChanged"/>
+        <Label Content="Количество столбцов:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,61,0,0"/>
+        <TextBox x:Name="ColumnLength" Width="37" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="171,67,0,0" MaxLength="2" PreviewTextInput="RowLength_PreviewTextInput"/>
+        <Button x:Name="SaveCfg" Content="Сохранить конфигурацию таблицы"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,92,0,0" Click="SaveCfg_Click" IsDefault="True"/>
+        <Button x:Name="LoadCfg" Content="Загрузить конфигурацию таблицы"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,117,0,0" ToolTip="Используется при необходимости обновить текущую таблицу согласно конфигурации" Width="198" Click="LoadCfg_Click"/>
+        <Button x:Name="Exit" Content="Выход" HorizontalAlignment="Left" Margin="10,142,0,0" VerticalAlignment="Top" Width="198" IsCancel="True" Click="Exit_Click"/>
+    </Grid>
+</Window>
