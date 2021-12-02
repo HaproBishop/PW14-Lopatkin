@@ -255,16 +255,14 @@ namespace PW13
             if (e.Key == Key.F12) AboutProgram_Click(sender, e);
             if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.Z)
             {
-                VisualTable.ItemsSource = VisualArray.CancelChanges().DefaultView;
-                WorkMas._dmas = VisualArray.SyncData();
+                Undo_Click(sender, e);
             }
 
             if (((e.KeyboardDevice.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) ==
                 (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.Z) ^
                 (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.Y))
             {
-                VisualTable.ItemsSource = VisualArray.CancelUndo().DefaultView;
-                WorkMas._dmas = VisualArray.SyncData();//Обязательная синхронизация
+                CancelUndo_Click(sender, e);
             }
         }
 
@@ -388,6 +386,21 @@ namespace PW13
                 CountColumns.Text = WorkMas._dmas.GetLength(1).ToString();
                 CreateMas_Click(sender, e);
             }
+        }
+        /// <summary>
+        /// Отмена изменений в таблице
+        /// </summary>
+        public void Undo_Click(object sender, RoutedEventArgs e)
+        {
+            VisualTable.ItemsSource = VisualArray.CancelChanges().DefaultView;
+            WorkMas._dmas = VisualArray.SyncData();
+        }/// <summary>
+         /// Отмена восстановления предыдущего состояния таблицы
+         /// </summary>
+        public void CancelUndo_Click(object sender, RoutedEventArgs e)
+        {
+            VisualTable.ItemsSource = VisualArray.CancelUndo().DefaultView;
+            WorkMas._dmas = VisualArray.SyncData();//Обязательная синхронизация
         }
     }
 }
