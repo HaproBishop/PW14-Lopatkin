@@ -32,12 +32,11 @@ namespace PW13
         public MainWindow()
         {
             InitializeComponent();
-            
             DispatcherTimer cell = new DispatcherTimer();//Таймер для StatusBar
             cell.Tick += Cell_Tick;
-            cell.Interval = new TimeSpan(0,0,0,0,200);
-            cell.IsEnabled = true;            
-        }        
+            cell.Interval = new TimeSpan(0, 0, 0, 0, 200);
+            cell.IsEnabled = true;
+        }
         private void Cell_Tick(object sender, EventArgs e)
         {
             string _defaultcurrentcell = "Ячейка не выбрана";
@@ -47,16 +46,16 @@ namespace PW13
                 if (VisualTable.SelectedIndex == -1 || VisualTable.CurrentCell.Column == null) CurrentCell.Text = _defaultcurrentcell;
                 else CurrentCell.Text = (VisualTable.CurrentCell.Column.DisplayIndex + 1).ToString() + " столбец / " + (VisualTable.SelectedIndex + 1) + " строка";
 
-                if (WorkMas._dmas.GetLength(1) <= 4)
+                if (WorkMas._dmas.GetLength(1) <= 4 && WorkMas._dmas.GetLength(1) != 0)
                     _linelength = WorkMas._dmas.GetLength(1).ToString() + " столбца / ";
                 else
-                    TableLength.Text = WorkMas._dmas.GetLength(1).ToString() + " столбцов / ";
-                if (WorkMas._dmas.GetLength(0) <= 4)
+                    _linelength = WorkMas._dmas.GetLength(1).ToString() + " столбцов / ";
+                if (WorkMas._dmas.GetLength(0) <= 4 && WorkMas._dmas.GetLength(0) != 0)
                     _linelength += WorkMas._dmas.GetLength(0).ToString() + " строки";
                 else
                     _linelength += WorkMas._dmas.GetLength(0).ToString() + " строк";
                 TableLength.Text = _linelength;
-             }
+            }
             else
             {
                 CurrentCell.Text = _defaultcurrentcell;
@@ -70,22 +69,21 @@ namespace PW13
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Open_Click(object sender, RoutedEventArgs e)
-        {            
+        {
             OpenFileDialog openfile = new OpenFileDialog
             {
                 Title = "Открытие таблицы",
                 Filter = "Все файлы (*.*) | *.* | Текстовые файлы | *.txt",
                 FilterIndex = 2,
-                DefaultExt = "*.txt",                
+                DefaultExt = "*.txt",
             };
-            
-            if (openfile.ShowDialog() == true) 
-            {                                
+
+            if (openfile.ShowDialog() == true)
+            {
                 WorkMas.Open_File(openfile.FileName); //Обращение к функции с параметром (название текстового файла, в котором хранятся данные)
                 VisualTable.ItemsSource = VisualArray.ToDataTable(WorkMas._dmas).DefaultView; //Отображение данных, считанных с файла
                 ClearResults();
                 VisualArray.ClearUndoAndCancelUndo();
-                DynamicActionsOnOrOff(e);
             }
         }
         /// <summary>
@@ -94,7 +92,7 @@ namespace PW13
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Save_Click(object sender, RoutedEventArgs e)
-        {            
+        {
             SaveFileDialog savefile = new SaveFileDialog
             {
                 Title = "Сохранение таблицы",
@@ -104,13 +102,14 @@ namespace PW13
             };
 
             if (savefile.ShowDialog() == true)
-            {                
-                if(e.Source == SaveMenu || e.Source == SaveToolBar) WorkMas._twomas = true;   
+            {
+                if (e.Source == SaveMenu || e.Source == SaveToolBar) WorkMas._twomas = true;
                 else WorkMas._twomas = false;
                 WorkMas.Save_File(savefile.FileName); //Обращение к функции с параметром (аналогично предыдущему) 
                 VisualArray.ClearUndoAndCancelUndo();
             }
         }
+
         /// <summary>
         /// Очистка таблицы;
         /// Также производится очистка undo and cancelundo
@@ -120,8 +119,7 @@ namespace PW13
         private void ClearTable_Click(object sender, RoutedEventArgs e)
         {
             VisualTable.ItemsSource = WorkMas.ClearTable(); //Обращение к функции "очистки" массива и возвращение null для DataGrid(Очистка таблицы)
-            VisualArray.ClearUndoAndCancelUndo();//Обращение к методу очистки undo and cancelundo
-            DynamicActionsOnOrOff(e);
+            VisualArray.ClearUndoAndCancelUndo();//Обращение к методу очистки undo and cancelundo            
             ClearResults();
         }
         /// <summary>
@@ -137,19 +135,18 @@ namespace PW13
             if (columns >= 0 && rows >= 0 && prv_columns && prv_rows)
             {
                 if (
-                    e.Source != CreateMas ||
-                    e.Source != CreateMasMenu ||
-                    e.Source != CreateMasToolBar)
+                   e.Source != CreateMas ||
+                   e.Source != CreateMasMenu ||
+                   e.Source != CreateMasToolBar)
                 {
                     if (e.Source == CreateMas
                         || e.Source == CreateMasMenu
                         || e.Source == CreateMasToolBar) WorkMas.CreateMas(in rows, in columns);
                     VisualArray.ClearUndoAndCancelUndo();
                     VisualTable.ItemsSource = VisualArray.ToDataTable(WorkMas._dmas).DefaultView;
-                    DynamicActionsOnOrOff(e);
                 }
             }
-            else MessageBox.Show("Некорректно введены значения, необходимо больше нуля!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            else MessageBox.Show("Ошибка. Числа должны быть больше 0", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
         /// <summary>
         /// Выход (Закрытие программы)
@@ -181,13 +178,17 @@ namespace PW13
         {
             ClearResults();
             bool prv_range = int.TryParse(Range.Text, out int range);
-            if (prv_range && WorkMas._dmas != null && range >= 0) //2-ое условие - проверка на заполнение без скелета(В нашем случае - проверка на скелет не нужна)
-            {                
-                WorkMas.FillDMas(in range);//Обращение с передачей информации об диапазоне
-                VisualTable.ItemsSource = VisualArray.ToDataTable(WorkMas._dmas).DefaultView; //Отображение таблицы с заполненными значениями
+            if (WorkMas._dmas != null)
+            {
+                if (prv_range && range > 0) //2-ое условие - проверка на заполнение без скелета(В нашем случае - проверка на скелет не нужна)
+                {
+                    WorkMas.FillDMas(in range);//Обращение с передачей информации об диапазоне
+                    VisualTable.ItemsSource = VisualArray.ToDataTable(WorkMas._dmas).DefaultView; //Отображение таблицы с заполненными значениями
+                }
+                else MessageBox.Show("Введен некорректно диапазон значений, необходимо больше 0",
+                    "Внимание!", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            else MessageBox.Show("Введен некорректно диапазон значений! Нужно 0 или больше",
-                "Внимание!", MessageBoxButton.OK, MessageBoxImage.Error);
+            else MessageForUserAboutTableIsNull();
         }
         /// <summary>
         /// Справка пользователю об особенностях программы
@@ -206,7 +207,7 @@ namespace PW13
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void VisualTable_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {                                 
+        {
             object cell = VisualTable.SelectedItem;//Зарезервированное значение ячейки до изменения
             int iRow = e.Row.GetIndex();
             int iColumn = e.Column.DisplayIndex;
@@ -217,8 +218,10 @@ namespace PW13
                 VisualArray.ReserveTable(WorkMas._dmas);//Резервирование текущей таблицы при успешном изменении значения
                 ClearResults();
             }
-            else 
+            else
             {
+                MessageBox.Show("Ошибка. Необходимо ввести число, а не символ.", "Ошибка", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
                 VisualTable.SelectedItem = cell;//Возвращение значения ячейки при неверном вводе
             }
             if (e.EditAction == DataGridEditAction.Cancel)
@@ -250,15 +253,15 @@ namespace PW13
             if (e.KeyboardDevice.Modifiers == ModifierKeys.Alt && e.Key == Key.F4) Exit_Click(sender, e);
             if (e.Key == Key.F1) Support_Click(sender, e);
             if (e.Key == Key.F12) AboutProgram_Click(sender, e);
-            if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.Z) 
+            if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.Z)
             {
                 VisualTable.ItemsSource = VisualArray.CancelChanges().DefaultView;
                 WorkMas._dmas = VisualArray.SyncData();
             }
-            
-            if (((e.KeyboardDevice.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) == 
+
+            if (((e.KeyboardDevice.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) ==
                 (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.Z) ^
-                (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.Y))            
+                (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.Y))
             {
                 VisualTable.ItemsSource = VisualArray.CancelUndo().DefaultView;
                 WorkMas._dmas = VisualArray.SyncData();//Обязательная синхронизация
@@ -266,73 +269,45 @@ namespace PW13
         }
 
         private void VisualTable_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {            
+        {
             e.Handled = "-1234567890".IndexOf(e.Text) < 0;
         }
         private void AddColumn_Click(object sender, RoutedEventArgs e)
         {
-            ClearResults();            
-            VisualTable.ItemsSource = VisualArray.AddNewColumn(ref WorkMas._dmas).DefaultView;            
+            if (WorkMas._dmas != null)
+            {
+                ClearResults();
+                VisualTable.ItemsSource = VisualArray.AddNewColumn(ref WorkMas._dmas).DefaultView;
+            }
+            else MessageForUserAboutTableIsNull();
         }
         private void AddRow_Click(object sender, RoutedEventArgs e)
         {
-            ClearResults();            
-            VisualTable.ItemsSource = VisualArray.AddNewRow(ref WorkMas._dmas).DefaultView;            
+            if (WorkMas._dmas != null)
+            {
+                ClearResults();
+                VisualTable.ItemsSource = VisualArray.AddNewRow(ref WorkMas._dmas).DefaultView;
+            }
+            else MessageForUserAboutTableIsNull();
         }
         private void DeleteColumn_Click(object sender, RoutedEventArgs e)
         {
-            if (VisualTable.CurrentCell.Column.DisplayIndex != -1)
+            if (VisualTable.CurrentCell.Column.DisplayIndex != -1 || VisualTable.CurrentCell.Column != null)
             {
-                ClearResults();                
+                ClearResults();
                 VisualTable.ItemsSource = VisualArray.DeleteColumn(ref WorkMas._dmas, VisualTable.CurrentCell.Column.DisplayIndex).DefaultView;
             }
+            else MessageForUserAboutUnselectedCell();
         }
 
         private void DeleteRow_Click(object sender, RoutedEventArgs e)
         {
             if (VisualTable.SelectedIndex != -1)
             {
-                ClearResults();                
+                ClearResults();
                 VisualTable.ItemsSource = VisualArray.DeleteRow(ref WorkMas._dmas, VisualTable.SelectedIndex).DefaultView;
             }
-        }
-        private void DynamicActionsOnOrOff(RoutedEventArgs e)
-        {
-            if (e.Source == CreateMas 
-                || e.Source == CreateMasMenu || e.Source == CreateMasToolBar
-                || e.Source == OpenMenu || e.Source == OpenToolBar || e.Source == Settings 
-                || e.Source == SettingsMenu || e.Source == MainWin)
-            {
-                DynamicActions.IsEnabled = true;
-                AddColumnContextMenu.IsEnabled = true;
-                AddRowContextMenu.IsEnabled = true;
-                DeleteColumnContextMenu.IsEnabled = true;
-                DeleteRowContextMenu.IsEnabled = true;                
-                Find.IsEnabled = true;
-                FindMenu.IsEnabled = true;
-                FillOfRandom.IsEnabled = true;                
-                FillMenu.IsEnabled = true;
-                FillToolBar.IsEnabled = true;
-                ClearTable.IsEnabled = true;
-                ClearTableMenu.IsEnabled = true;
-                ClearTableToolBar.IsEnabled = true;
-            }
-            else
-            {
-                DynamicActions.IsEnabled = false;
-                AddColumnContextMenu.IsEnabled = false;
-                AddRowContextMenu.IsEnabled = false;
-                DeleteColumnContextMenu.IsEnabled = false;
-                DeleteRowContextMenu.IsEnabled = false;                
-                Find.IsEnabled = false;
-                FindMenu.IsEnabled = false;
-                FillOfRandom.IsEnabled = false;
-                FillMenu.IsEnabled = false;
-                FillToolBar.IsEnabled = false;
-                ClearTable.IsEnabled = false;
-                ClearTableMenu.IsEnabled = false;
-                ClearTableToolBar.IsEnabled = false;
-            }
+            else MessageForUserAboutUnselectedCell();
         }
         private void ClearResults()
         {
@@ -341,26 +316,30 @@ namespace PW13
         }
 
         private void Find_Click(object sender, RoutedEventArgs e)
-        {            
-            VisualArray.ClearUndoAndCancelUndo();
-            int [][] result = FindCountMoreAvgColumnClass.FindCountMoreAvgColumn(WorkMas._dmas);
-            AvgOfColumns.ItemsSource = VisualArray.ToDataTable(result[0]).DefaultView;
-            CountMoreAvgOfColumns.ItemsSource = VisualArray.ToDataTable(result[1]).DefaultView;            
-            MessageBoxResult saveresult = MessageBox.Show("Вы хотите сохранить результаты среднего арифметического столбцов?", "Сохранение результатов среднего арифметического",
-                MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (saveresult == MessageBoxResult.Yes)
+        {
+            if (WorkMas._dmas != null)
             {
-                WorkMas._mas = result[0];
-                Save_Click(sender, e);
+                VisualArray.ClearUndoAndCancelUndo();
+                int[][] result = FindCountMoreAvgColumnClass.FindCountMoreAvgColumn(WorkMas._dmas);
+                AvgOfColumns.ItemsSource = VisualArray.ToDataTable(result[0]).DefaultView;
+                CountMoreAvgOfColumns.ItemsSource = VisualArray.ToDataTable(result[1]).DefaultView;
+                MessageBoxResult saveresult = MessageBox.Show("Вы хотите сохранить результаты среднего арифметического столбцов?", "Сохранение результатов среднего арифметического",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (saveresult == MessageBoxResult.Yes)
+                {
+                    WorkMas._mas = result[0];
+                    Save_Click(sender, e);
+                }
+                saveresult = MessageBox.Show("Вы хотите сохранить результаты количества значений ячеек, больших среднего" +
+                    " арифметического?", "Сохранение результатов количества",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (saveresult == MessageBoxResult.Yes)
+                {
+                    WorkMas._mas = result[1];
+                    Save_Click(sender, e);
+                }
             }
-            saveresult = MessageBox.Show("Вы хотите сохранить результаты количества значений ячеек, больших среднего" +
-                " арифметического?", "Сохранение результатов количества",
-                MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (saveresult == MessageBoxResult.Yes)
-            {
-                WorkMas._mas = result[1];
-                Save_Click(sender, e);
-            }
+            else MessageForUserAboutTableIsNull();
         }
 
         private void MainWin_Loaded(object sender, RoutedEventArgs e)
@@ -378,9 +357,19 @@ namespace PW13
             CreateMas_Click(sender, e);
         }
 
+        public void MessageForUserAboutTableIsNull()
+        {
+            MessageBox.Show("В несуществующую таблицу нельзя занести данные! Создайте таблицу для заполнения" +
+                " ее значениями!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        public void MessageForUserAboutUnselectedCell()
+        {
+            MessageBox.Show("Необходимо выбрать ячейку с определенным номером столбца или строки, чтобы произвести удаление!",
+                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
         private void MainWin_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if(!_closewithoutmessage)
+            if (!_closewithoutmessage)
             {
                 MessageBoxResult result = MessageBox.Show("Вы точно хотите выйти из программы?", "Закрытие программы", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes) e.Cancel = false;
@@ -393,9 +382,12 @@ namespace PW13
             SettingsWindow settingswin = new SettingsWindow();
             settingswin.Owner = this;
             settingswin.ShowDialog();
-            CountRows.Text = WorkMas._dmas.GetLength(0).ToString();
-            CountColumns.Text = WorkMas._dmas.GetLength(1).ToString();
-            CreateMas_Click(sender, e);
+            if (settingswin._loadedcfg)
+            {
+                CountRows.Text = WorkMas._dmas.GetLength(0).ToString();
+                CountColumns.Text = WorkMas._dmas.GetLength(1).ToString();
+                CreateMas_Click(sender, e);
+            }
         }
     }
 }

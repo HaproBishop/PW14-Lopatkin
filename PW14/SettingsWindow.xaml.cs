@@ -25,30 +25,31 @@ namespace PW13
         {
             InitializeComponent();
         }
-        Configuration cfg;
-        bool _savedcfg;
+        public bool _loadedcfg;
+        Configuration _cfg;
+        bool _savedcfg;        
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cfg = new Configuration();
-            cfg.LoadConfig();            
-            RowLength.Text = cfg.RowLength.ToString();
-            ColumnLength.Text = cfg.ColumnLength.ToString();
-            if (cfg.TryTip)
+            _cfg = new Configuration();
+            _cfg.LoadConfig();            
+            RowLength.Text = _cfg.RowLength.ToString();
+            ColumnLength.Text = _cfg.ColumnLength.ToString();
+            if (_cfg.TryTip)
             {
                 TryTip.IsChecked = true;
                 MessageBox.Show("Здесь можно настроить размер таблицы по умолчанию при открытии программы", "Подсказка", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else TryTip.IsChecked = false;            
-            if (cfg.FirstOpenSettings)
+            if (_cfg.FirstOpenSettings)
             {                                
                 MessageBoxResult resultoftry = MessageBox.Show("Вы хотите видеть подсказку при каждом открытии этого окна? Позже можно изменить настройки.", "Повторное открытие подсказки", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (resultoftry == MessageBoxResult.Yes) cfg.TryTip = true;
+                if (resultoftry == MessageBoxResult.Yes) _cfg.TryTip = true;
                 else
                 {
-                    cfg.TryTip = false;
+                    _cfg.TryTip = false;
                     SaveCfg_Click(sender, e);
                 }
-                cfg.FirstOpenSettings = false;
+                _cfg.FirstOpenSettings = false;
             }
         }
 
@@ -58,23 +59,26 @@ namespace PW13
             bool provecolumnlength = int.TryParse(ColumnLength.Text, out int columnlength);
             if (proverowlength && provecolumnlength && rowlength > 0 && columnlength > 0 || (rowlength == 0 && columnlength == 0))
             {
-                cfg.SaveConfig(rowlength, columnlength);                
+                _cfg.SaveConfig(rowlength, columnlength);                
                 MessageBox.Show("Конфигурация сохранена", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
                 MessageBox.Show("Значения не могут отличаться нулем. Или не должно быть таблицы (для этого поставить 0 для полей), или " +
                 "поставить для двух полей значения больше нуля!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                ColumnLength.Text = cfg.ColumnLength.ToString();
-                RowLength.Text = cfg.RowLength.ToString();                
+                ColumnLength.Text = _cfg.ColumnLength.ToString();
+                RowLength.Text = _cfg.RowLength.ToString();                
             }
             _savedcfg = true;
         }
 
         private void LoadCfg_Click(object sender, RoutedEventArgs e)
         {
-            if (cfg.RowLength == Convert.ToInt32(RowLength.Text) && cfg.ColumnLength == Convert.ToInt32(ColumnLength.Text))
-                WorkMas._dmas = new int[cfg.RowLength, cfg.ColumnLength];
+            if (_cfg.RowLength == Convert.ToInt32(RowLength.Text) && _cfg.ColumnLength == Convert.ToInt32(ColumnLength.Text))
+            {
+                _loadedcfg = true;
+                WorkMas._dmas = new int[_cfg.RowLength, _cfg.ColumnLength];
+            }
             else MessageBox.Show("Для отображения таблицы необходимо синхронизировать данные", "Ошибка", MessageBoxButton.OK,
                 MessageBoxImage.Stop);
         }
@@ -87,8 +91,8 @@ namespace PW13
         private void TryTip_Click(object sender, RoutedEventArgs e)
         {
             _savedcfg = false;
-            if (TryTip.IsChecked == true) cfg.TryTip = true;
-            else cfg.TryTip = false;
+            if (TryTip.IsChecked == true) _cfg.TryTip = true;
+            else _cfg.TryTip = false;
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)

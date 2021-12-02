@@ -133,7 +133,6 @@
     <Resource Include="icons\AboutProgram.ico" />
     <Resource Include="icons\Exit.ico" />
     <Resource Include="icons\LoadFrom.ico" />
-    <Resource Include="icons\LogoIco.ico" />
     <Resource Include="icons\SaveTo.ico" />
     <Resource Include="icons\SettingsOnWhiteIco.ico" />
     <Resource Include="icons\Support.ico" />
@@ -147,6 +146,12 @@
   <ItemGroup>
     <Resource Include="icons\CreateEmptyTable.ico" />
     <Resource Include="icons\FillTable.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\AddColumn.ico" />
+    <Resource Include="icons\AddRow.ico" />
+    <Resource Include="icons\DelColumn.ico" />
+    <Resource Include="icons\DelRow.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
