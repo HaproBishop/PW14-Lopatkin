@@ -18,7 +18,6 @@ using LibMas;
 using VisualTable;
 using FindCountMoreAvgColumnLibrary;
 using System.Windows.Threading;
-using LibraryOfConfigurationForVisualTableSettings;
 //Практическая работа №13. Лопаткин Сергей ИСП-31
 //Задание №8. Дана матрица размера M * N. В каждом ее столбце найти количество элементов, 
 //больших среднего арифметического всех элементов этого столбца
@@ -62,7 +61,6 @@ namespace PW13
                 TableLength.Text = "Таблица не создана";
             }
         }
-        public static bool _closewithoutmessage;
         /// <summary>
         /// Шаблонное открытие таблицы
         /// </summary>
@@ -109,7 +107,6 @@ namespace PW13
                 VisualArray.ClearUndoAndCancelUndo();
             }
         }
-
         /// <summary>
         /// Очистка таблицы;
         /// Также производится очистка undo and cancelundo
@@ -132,19 +129,11 @@ namespace PW13
             ClearResults();
             bool prv_columns = int.TryParse(CountColumns.Text, out int columns);
             bool prv_rows = int.TryParse(CountRows.Text, out int rows);
-            if (columns >= 0 && rows >= 0 && prv_columns && prv_rows)
+            if (prv_columns == true && prv_rows == true && columns > 0 && rows > 0)
             {
-                if (
-                   e.Source != CreateMas ||
-                   e.Source != CreateMasMenu ||
-                   e.Source != CreateMasToolBar)
-                {
-                    if (e.Source == CreateMas
-                        || e.Source == CreateMasMenu
-                        || e.Source == CreateMasToolBar) WorkMas.CreateMas(in rows, in columns);
-                    VisualArray.ClearUndoAndCancelUndo();
-                    VisualTable.ItemsSource = VisualArray.ToDataTable(WorkMas._dmas).DefaultView;
-                }
+                WorkMas.CreateMas(in rows, in columns);
+                VisualArray.ClearUndoAndCancelUndo();
+                VisualTable.ItemsSource = VisualArray.ToDataTable(WorkMas._dmas).DefaultView;
             }
             else MessageBox.Show("Ошибка. Числа должны быть больше 0", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
@@ -180,7 +169,7 @@ namespace PW13
             bool prv_range = int.TryParse(Range.Text, out int range);
             if (WorkMas._dmas != null)
             {
-                if (prv_range && range > 0) //2-ое условие - проверка на заполнение без скелета(В нашем случае - проверка на скелет не нужна)
+                if (prv_range == true && range > 0) //2-ое условие - проверка на заполнение без скелета(В нашем случае - проверка на скелет не нужна)
                 {
                     WorkMas.FillDMas(in range);//Обращение с передачей информации об диапазоне
                     VisualTable.ItemsSource = VisualArray.ToDataTable(WorkMas._dmas).DefaultView; //Отображение таблицы с заполненными значениями
@@ -198,8 +187,13 @@ namespace PW13
         private void Support_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("1) В программе нельзя вводить более трехзначных чисел для диапазона и двухзначных для столбцов и строк.\n" +
-                "2)Заполнение происходит от 0 до указанного вами значения\n" +
-                "3)Для включения кнопок \"Выполнить\" и \"Заполнить\" необходимо создать таблицу.", "Справка", MessageBoxButton.OK, MessageBoxImage.Information);
+                "2) Заполнение происходит от 0 до указанного вами значения\n" +
+                "3) Для включения кнопок \"Выполнить\" и \"Заполнить\" необходимо создать таблицу.\n" +
+                "4) Пользователю, который НЕ ИМЕЕТ мышки, может воспользоваться горячими клавишами для изменения таблицы. Приведен следующий список:\n" +
+                "- ctrl+s - сохранение исходной таблицы\n" +
+                "- ctrl+o - открытие исходной сохраненной таблицы\n" +
+                "- ctrl+shift+a(d) - добавление(удаление) нового столбца\n" +
+                "- ctrl+a(d) - добавление(удаление) новой строки", "Справка", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         /// <summary>
         /// Событие окончания изменения значения ячейки 
@@ -230,16 +224,18 @@ namespace PW13
             }
         }
         //Переключение дефолта относительно полученного фокуса
-        private void CountColumns_GotFocus(object sender, RoutedEventArgs e)
-        {
-            CreateMas.IsDefault = true;
-            Fill.IsDefault = false;
-        }
-
         private void Range_GotFocus(object sender, RoutedEventArgs e)
         {
-            CreateMas.IsDefault = false;
-            Fill.IsDefault = true;
+            if (e.Source == Range)
+            {
+                CreateMas.IsDefault = false;
+                Fill.IsDefault = true;
+            }
+            else
+            {
+                CreateMas.IsDefault = true;
+                Fill.IsDefault = false;
+            }
         }
         /// <summary>
         /// Событие нажатия клавиш для окна (В данном случае используется для горячих клавиш)
@@ -263,6 +259,24 @@ namespace PW13
                 (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.Y))
             {
                 CancelUndo_Click(sender, e);
+            }
+            if ((e.KeyboardDevice.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) ==
+                (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.A)
+            {
+                AddColumn_Click(sender, e);
+            }
+            if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.A)
+            {
+                AddRow_Click(sender, e);
+            }
+            if ((e.KeyboardDevice.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) ==
+                (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.D)
+            {
+                DeleteColumn_Click(sender, e);
+            }
+            if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.D)
+            {
+                DeleteRow_Click(sender, e);
             }
         }
 
@@ -338,54 +352,21 @@ namespace PW13
                 }
             }
             else MessageForUserAboutTableIsNull();
-        }
-
-        private void MainWin_Loaded(object sender, RoutedEventArgs e)
-        {
-            PasswordWindow passwordwin = new PasswordWindow
-            {
-                Owner = this
-            };
-            passwordwin.ShowDialog();
-            Configuration cfg = new Configuration();
-            cfg.LoadConfig();
-            WorkMas._dmas = new int[cfg.RowLength, cfg.ColumnLength];
-            CountRows.Text = WorkMas._dmas.GetLength(0).ToString();
-            CountColumns.Text = WorkMas._dmas.GetLength(1).ToString();
-            CreateMas_Click(sender, e);
-        }
-
+        }/// <summary>
+         /// Метод для шаблонного отображения сообщения пользователю о требующейся созданной таблицы для возможности заполнения
+         /// </summary>
         public void MessageForUserAboutTableIsNull()
         {
             MessageBox.Show("В несуществующую таблицу нельзя занести данные! Создайте таблицу для заполнения" +
                 " ее значениями!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+        /// <summary>
+        /// Метод для шаблонного отображения сообщения пользователю о невыбранной ячейке
+        /// </summary>
         public void MessageForUserAboutUnselectedCell()
         {
             MessageBox.Show("Необходимо выбрать ячейку с определенным номером столбца или строки, чтобы произвести удаление!",
                 "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-        private void MainWin_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (!_closewithoutmessage)
-            {
-                MessageBoxResult result = MessageBox.Show("Вы точно хотите выйти из программы?", "Закрытие программы", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes) e.Cancel = false;
-                else e.Cancel = true;
-            }
-        }
-
-        private void Settings_Click(object sender, RoutedEventArgs e)
-        {
-            SettingsWindow settingswin = new SettingsWindow();
-            settingswin.Owner = this;
-            settingswin.ShowDialog();
-            if (settingswin._loadedcfg)
-            {
-                CountRows.Text = WorkMas._dmas.GetLength(0).ToString();
-                CountColumns.Text = WorkMas._dmas.GetLength(1).ToString();
-                CreateMas_Click(sender, e);
-            }
         }
         /// <summary>
         /// Отмена изменений в таблице
