@@ -27,7 +27,7 @@ namespace PW13
         }
         public bool _loadedcfg;
         Configuration _cfg;
-        bool _savedcfg;        
+        bool _savedcfg;       
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             _cfg = new Configuration();
@@ -47,25 +47,25 @@ namespace PW13
                 else
                 {
                     _cfg.TryTip = false;
-                    SaveCfg_Click(sender, e);
                 }
                 _cfg.FirstOpenSettings = false;
+                SaveCfg_Click(sender, e);
             }
+            _savedcfg = true;
         }
 
         private void SaveCfg_Click(object sender, RoutedEventArgs e)
         {
             bool proverowlength = int.TryParse(RowLength.Text, out int rowlength);
             bool provecolumnlength = int.TryParse(ColumnLength.Text, out int columnlength);
-            if (proverowlength && provecolumnlength && rowlength > 0 && columnlength > 0 || (rowlength == 0 && columnlength == 0))
+            if (proverowlength && provecolumnlength && rowlength >= 0 && columnlength >= 0)
             {
                 _cfg.SaveConfig(rowlength, columnlength);                
                 MessageBox.Show("Конфигурация сохранена", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
-                MessageBox.Show("Значения не могут отличаться нулем. Или не должно быть таблицы (для этого поставить 0 для полей), или " +
-                "поставить для двух полей значения больше нуля!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Необходимо число больше или равное 0", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 ColumnLength.Text = _cfg.ColumnLength.ToString();
                 RowLength.Text = _cfg.RowLength.ToString();                
             }
@@ -96,18 +96,33 @@ namespace PW13
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
-        {           
-            if(_savedcfg) Close();
-            else
-            {
-                MessageBoxResult result = MessageBox.Show("Хотите сохранить изменения перед выходом? Настройки сбросятся до " +
-                    "предыдущего состояния, так как вы не нажали клавишу сохранить.", "Сохранение и выход", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            }
+        {
+            BeforeExit();
+            if (_savedcfg) Close();
         }
 
         private void RowLength_TextChanged(object sender, TextChangedEventArgs e)
         {
             _savedcfg = false;
+        }
+
+        private void SettingsWin_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            BeforeExit();
+        }
+        private void BeforeExit()
+        {
+            if(!_savedcfg)
+            {
+                MessageBoxResult result = MessageBox.Show("Хотите сохранить изменения перед выходом? Настройки сбросятся до " +
+                    "предыдущего состояния, так как вы не нажали клавишу сохранить.", "Сохранение и выход", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    RoutedEventArgs e = new RoutedEventArgs();
+                    object sender = new object();
+                    SaveCfg_Click(sender, e);
+                }
+            }
         }
     }
 }

@@ -18,6 +18,7 @@ using LibMas;
 using VisualTable;
 using FindCountMoreAvgColumnLibrary;
 using System.Windows.Threading;
+using LibraryOfConfigurationForVisualTableSettings;
 //Практическая работа №13. Лопаткин Сергей ИСП-31
 //Задание №8. Дана матрица размера M * N. В каждом ее столбце найти количество элементов, 
 //больших среднего арифметического всех элементов этого столбца
@@ -61,6 +62,7 @@ namespace PW13
                 TableLength.Text = "Таблица не создана";
             }
         }
+        public static bool _closewithoutmessage;
         /// <summary>
         /// Шаблонное открытие таблицы
         /// </summary>
@@ -129,13 +131,13 @@ namespace PW13
             ClearResults();
             bool prv_columns = int.TryParse(CountColumns.Text, out int columns);
             bool prv_rows = int.TryParse(CountRows.Text, out int rows);
-            if (prv_columns == true && prv_rows == true && columns > 0 && rows > 0)
+            if (prv_columns == true && prv_rows == true && columns >= 0 && rows >= 0)
             {
                 WorkMas.CreateMas(in rows, in columns);
                 VisualArray.ClearUndoAndCancelUndo();
                 VisualTable.ItemsSource = VisualArray.ToDataTable(WorkMas._dmas).DefaultView;
             }
-            else MessageBox.Show("Ошибка. Числа должны быть больше 0", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            else MessageBox.Show("Ошибка. Числа должны быть больше или равны 0", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
         /// <summary>
         /// Выход (Закрытие программы)
@@ -382,6 +384,42 @@ namespace PW13
         {
             VisualTable.ItemsSource = VisualArray.CancelUndo().DefaultView;
             WorkMas._dmas = VisualArray.SyncData();//Обязательная синхронизация
+        }
+        private void MainWin_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!_closewithoutmessage)
+            {
+                MessageBoxResult result = MessageBox.Show("Вы точно хотите выйти из программы?", "Закрытие программы", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes) e.Cancel = false;
+                else e.Cancel = true;
+            }
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsWindow settingswin = new SettingsWindow();
+            settingswin.Owner = this;
+            settingswin.ShowDialog();
+            if (settingswin._loadedcfg)
+            {
+                CountRows.Text = WorkMas._dmas.GetLength(0).ToString();
+                CountColumns.Text = WorkMas._dmas.GetLength(1).ToString();
+                CreateMas_Click(sender, e);
+            }
+        }
+        private void MainWin_Loaded(object sender, RoutedEventArgs e)
+        {
+            PasswordWindow passwordwin = new PasswordWindow
+            {
+                Owner = this
+            };
+            passwordwin.ShowDialog();
+            Configuration cfg = new Configuration();
+            cfg.LoadConfig();
+            WorkMas._dmas = new int[cfg.RowLength, cfg.ColumnLength];
+            CountRows.Text = WorkMas._dmas.GetLength(0).ToString();
+            CountColumns.Text = WorkMas._dmas.GetLength(1).ToString();
+            CreateMas_Click(sender, e);
         }
     }
 }
