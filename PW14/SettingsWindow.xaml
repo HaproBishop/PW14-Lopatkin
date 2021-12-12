@@ -6,18 +6,18 @@
         xmlns:local="clr-namespace:PW13"
         mc:Ignorable="d"
         Title="Настройки" Height="200" Width="250" ResizeMode="NoResize" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" WindowStyle="SingleBorderWindow" Closing="SettingsWin_Closing">
-    <DockPanel LastChildFill="False">
-        <CheckBox x:Name="TryTip" Content="Показывать снова подсказку" DockPanel.Dock="Top" IsChecked="True" ToolTip="Разрешает показ подсказок при запуске окна (если стоит галочка). Отключение - ее снятие." Click="TryTip_Click"/>
+    <DockPanel LastChildFill="True">
+        <CheckBox x:Name="TryTip" Content="Показывать снова подсказку" FontSize="12" DockPanel.Dock="Top" IsChecked="True" ToolTip="Разрешает показ подсказок при запуске окна (если стоит галочка). Отключение - ее снятие." Click="TryTip_Click"/>
         <DockPanel LastChildFill="True" DockPanel.Dock="Top">
-            <Label Content="Количество строк:" DockPanel.Dock="Left"/>
-            <TextBox x:Name="RowLength" DockPanel.Dock="Right" VerticalContentAlignment="Center" MaxLength="2" PreviewTextInput="RowLength_PreviewTextInput" TextChanged="RowLength_TextChanged" Margin="3"/>
+            <Label Content="Количество строк:" FontSize="12" DockPanel.Dock="Left"/>
+            <TextBox x:Name="RowLength" FontSize="12" DockPanel.Dock="Right" VerticalContentAlignment="Center" MaxLength="2" PreviewTextInput="RowLength_PreviewTextInput" TextChanged="RowLength_TextChanged" Margin="3"/>
         </DockPanel>
         <DockPanel LastChildFill="True" DockPanel.Dock="Top">
-            <Label Content="Количество столбцов:" DockPanel.Dock="Left"/>
-            <TextBox x:Name="ColumnLength" MaxLength="2" PreviewTextInput="RowLength_PreviewTextInput" TextChanged="RowLength_TextChanged" DockPanel.Dock="Right" Margin="3"/>
+            <Label Content="Количество столбцов:" FontSize="12" DockPanel.Dock="Left"/>
+            <TextBox x:Name="ColumnLength" FontSize="12" MaxLength="2" PreviewTextInput="RowLength_PreviewTextInput" TextChanged="RowLength_TextChanged" DockPanel.Dock="Right" Margin="3"/>
         </DockPanel>
-        <Button x:Name="SaveCfg" Content="Сохранить конфигурацию таблицы" Click="SaveCfg_Click" IsDefault="True" Margin="3" DockPanel.Dock="Top"/>
-        <Button x:Name="LoadCfg" Content="Загрузить конфигурацию таблицы" Margin="3" ToolTip="Используется при необходимости обновить текущую таблицу согласно конфигурации" Click="LoadCfg_Click" DockPanel.Dock="Top"/>
-        <Button x:Name="Exit" Content="Выход" IsCancel="True" Click="Exit_Click" Margin="3" DockPanel.Dock="Top"/>
+        <Button x:Name="SaveCfg" FontSize="12" Content="Сохранить конфигурацию таблицы" Click="SaveCfg_Click" IsDefault="True" Margin="3" DockPanel.Dock="Top"/>
+        <Button x:Name="LoadCfg" FontSize="12" Content="Загрузить конфигурацию таблицы" Margin="3" ToolTip="Используется при необходимости обновить текущую таблицу согласно конфигурации" Click="LoadCfg_Click" DockPanel.Dock="Top"/>
+        <Button x:Name="Exit" FontSize="12" Content="Выход" IsCancel="True" Click="Exit_Click" Margin="3" DockPanel.Dock="Top"/>
     </DockPanel>
 </Window>
