@@ -142,13 +142,17 @@ namespace PW13
             ClearResults();
             bool prv_columns = int.TryParse(CountColumns.Text, out int columns);
             bool prv_rows = int.TryParse(CountRows.Text, out int rows);
-            if (prv_columns == true && prv_rows == true && columns >= 0 && rows >= 0)
+            if (prv_columns && prv_rows && columns >= 0 && rows >= 0)
             {
                 WorkMas.CreateMas(in rows, in columns);
                 VisualArray.ClearUndoAndCancelUndo();
                 VisualTable.ItemsSource = VisualArray.ToDataTable(WorkMas._dmas).DefaultView;
             }
-            else MessageBox.Show("Ошибка. Числа должны быть больше или равны 0", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            else
+            {
+                MessageBox.Show("Ошибка. Числа должны быть больше или равны 0", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                CountRows.Focus();
+            }
         }
         /// <summary>
         /// Выход (Закрытие программы)
@@ -182,13 +186,17 @@ namespace PW13
             bool prv_range = int.TryParse(Range.Text, out int range);
             if (WorkMas._dmas != null)
             {
-                if (prv_range == true && range > 0) //2-ое условие - проверка на заполнение без скелета(В нашем случае - проверка на скелет не нужна)
+                if (prv_range && range > 0) //2-ое условие - проверка на заполнение без скелета(В нашем случае - проверка на скелет не нужна)
                 {
                     WorkMas.FillDMas(in range);//Обращение с передачей информации об диапазоне
                     VisualTable.ItemsSource = VisualArray.ToDataTable(WorkMas._dmas).DefaultView; //Отображение таблицы с заполненными значениями
                 }
-                else MessageBox.Show("Введен некорректно диапазон значений, необходимо больше 0",
+                else
+                {
+                    MessageBox.Show("Введен некорректно диапазон значений, необходимо больше 0",
                     "Внимание!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Range.Focus();
+                }
             }
             else MessageForUserAboutTableIsNull();
         }
@@ -372,6 +380,7 @@ namespace PW13
         {
             MessageBox.Show("В несуществующую таблицу нельзя занести данные! Создайте таблицу для заполнения" +
                 " ее значениями!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            CountRows.Focus();
         }
         /// <summary>
         /// Метод для шаблонного отображения сообщения пользователю о невыбранной ячейке
