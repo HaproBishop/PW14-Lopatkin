@@ -38,12 +38,7 @@ namespace PW13
             _cfg.LoadConfig();         //Выгрузка из файла данных в объект _cfg   
             RowLength.Text = _cfg.RowLength.ToString();//Считывание значений из свойств объекта
             ColumnLength.Text = _cfg.ColumnLength.ToString();
-            if (_cfg.TryTip)//Проверка на требуемое отображение подсказки(TryTip - повторить подсказку)
-            {
-                TryTip.IsChecked = true;//Ставим галочку при удовлетворении условию
-                MessageBox.Show("Здесь можно настроить размер таблицы по умолчанию при открытии программы", "Подсказка", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else TryTip.IsChecked = false;            
+            if (_cfg.TryTip) MessageBox.Show("Здесь можно настроить размер таблицы по умолчанию при открытии программы", "Подсказка", MessageBoxButton.OK, MessageBoxImage.Information);
             if (_cfg.FirstOpenSettings)//Проверка на первый запуск (свойство в объекте)
             {                                
                 MessageBoxResult resultoftry = MessageBox.Show("Вы хотите видеть подсказку при каждом открытии этого окна? Позже можно изменить настройки.", "Повторное открытие подсказки", MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -55,6 +50,7 @@ namespace PW13
                 _cfg.FirstOpenSettings = false;
                 SaveCfg_Click(sender, e);
             }
+            TryTip.IsChecked = _tryTipFromFile = _cfg.TryTip;
             _savedcfg = true;//Задание true для отсутствия вопроса при закрытии программы
         }
 
@@ -64,6 +60,7 @@ namespace PW13
             bool provecolumnlength = int.TryParse(ColumnLength.Text, out int columnlength);
             if (proverowlength && provecolumnlength && rowlength >= 0 && columnlength >= 0)
             {
+                _tryTipFromFile = _cfg.TryTip;
                 _cfg.SaveConfig(rowlength, columnlength);  //Сохранение в файл данной конфигурации
                 MessageBox.Show("Конфигурация сохранена", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -98,17 +95,21 @@ namespace PW13
         {
             e.Handled = "1234567890".IndexOf(e.Text) < 0;
         }
+        bool _tryTipFromFile;
+        bool _previousSavedCfg;
         private void TryTip_Click(object sender, RoutedEventArgs e)
         {
+            if(_previousSavedCfg == false && _savedcfg == true) _previousSavedCfg = _savedcfg;
             _savedcfg = false;
             if (TryTip.IsChecked == true) _cfg.TryTip = true;//Синхронизация значений галочки со свойством 
             else _cfg.TryTip = false;
+            if (_previousSavedCfg && TryTip.IsChecked == _tryTipFromFile) _savedcfg = true;
         }
 
 
         private void RowLength_TextChanged(object sender, TextChangedEventArgs e)
         {
-            _savedcfg = false;
+            _previousSavedCfg = _savedcfg = false;
         }
 
         private void SettingsWin_Closing(object sender, System.ComponentModel.CancelEventArgs e)
