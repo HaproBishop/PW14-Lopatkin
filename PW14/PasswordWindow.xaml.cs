@@ -24,6 +24,8 @@ namespace PW13
             InitializeComponent();            
         }
         bool _enter;//Проверка на закрытие окна при успешном вводе
+        //P.S.Используется для задания bool _closeWithoutMessage - закрытие программы без подтверждения
+        //посредством закрытия окна авторизации или отмены (другое сообщение задается для авторизации при выходе, чтобы не было повторений)
         private void Enter_Click(object sender, RoutedEventArgs e)
         {
             if (PasswordLine.Password == "123")
@@ -40,13 +42,17 @@ namespace PW13
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (!_enter)
+            if (!_enter)//Проверка на успешное закрытие последством правильного ввода пароля
             {
                 MainWindow._closeWithoutMessage = true;
                 Owner.Close();
             }
         }
-
+        /// <summary>
+        /// Используется для закрытия программы(если требуется в соответствии с условием) и окна авторизации
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!_enter)

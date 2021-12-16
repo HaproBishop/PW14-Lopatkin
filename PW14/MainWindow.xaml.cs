@@ -420,7 +420,7 @@ namespace PW13
             SettingsWindow settingswin = new SettingsWindow();
             settingswin.Owner = this;
             settingswin.ShowDialog(); 
-            if (settingswin._loadedcfg)
+            if (settingswin._loadedСfg)
             {
                 CountRows.Text = WorkMas._dmas.GetLength(0).ToString();
                 CountColumns.Text = WorkMas._dmas.GetLength(1).ToString();

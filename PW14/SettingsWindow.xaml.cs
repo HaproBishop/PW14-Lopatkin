@@ -24,23 +24,27 @@ namespace PW13
         public SettingsWindow()
         {
             InitializeComponent();
-        }
-        public bool _loadedcfg;
-        Configuration _cfg;
-        bool _savedcfg;
+        }/// <summary>
+         /// Поле, которое указывает на загруженность конфига в главное окно
+         /// P.S. Используется для проверки на выгрузку данных из массива в таблицу, который обновляется
+         /// в данном классе
+         /// </summary>
+        public bool _loadedСfg;
+        Configuration _cfg;//Переменная конфигурации описана
+        bool _savedcfg;//Проверка на выполненное сохранение конфига, которая используется перед выходом из окна настроек
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {            
             _cfg = new Configuration();
-            _cfg.LoadConfig();            
-            RowLength.Text = _cfg.RowLength.ToString();
+            _cfg.LoadConfig();         //Выгрузка из файла данных в объект _cfg   
+            RowLength.Text = _cfg.RowLength.ToString();//Считывание значений из свойств объекта
             ColumnLength.Text = _cfg.ColumnLength.ToString();
-            if (_cfg.TryTip)
+            if (_cfg.TryTip)//Проверка на требуемое отображение подсказки(TryTip - повторить подсказку)
             {
-                TryTip.IsChecked = true;
+                TryTip.IsChecked = true;//Ставим галочку при удовлетворении условию
                 MessageBox.Show("Здесь можно настроить размер таблицы по умолчанию при открытии программы", "Подсказка", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else TryTip.IsChecked = false;            
-            if (_cfg.FirstOpenSettings)
+            if (_cfg.FirstOpenSettings)//Проверка на первый запуск (свойство в объекте)
             {                                
                 MessageBoxResult resultoftry = MessageBox.Show("Вы хотите видеть подсказку при каждом открытии этого окна? Позже можно изменить настройки.", "Повторное открытие подсказки", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (resultoftry == MessageBoxResult.Yes) _cfg.TryTip = true;
@@ -51,7 +55,7 @@ namespace PW13
                 _cfg.FirstOpenSettings = false;
                 SaveCfg_Click(sender, e);
             }
-            _savedcfg = true;
+            _savedcfg = true;//Задание true для отсутствия вопроса при закрытии программы
         }
 
         private void SaveCfg_Click(object sender, RoutedEventArgs e)
@@ -60,7 +64,7 @@ namespace PW13
             bool provecolumnlength = int.TryParse(ColumnLength.Text, out int columnlength);
             if (proverowlength && provecolumnlength && rowlength >= 0 && columnlength >= 0)
             {
-                _cfg.SaveConfig(rowlength, columnlength);                
+                _cfg.SaveConfig(rowlength, columnlength);  //Сохранение в файл данной конфигурации
                 MessageBox.Show("Конфигурация сохранена", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
@@ -74,11 +78,11 @@ namespace PW13
 
         private void LoadCfg_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
+            try//Используется в случае ошибки конвертации в Int32
+            {//Проверка на совпадение значений перед выгрузкой данных
                 if (_cfg.RowLength == Convert.ToInt32(RowLength.Text) && _cfg.ColumnLength == Convert.ToInt32(ColumnLength.Text))
                 {
-                    _loadedcfg = true;
+                    _loadedСfg = true;//Задание переменной с типом bool значение успешности (Следует из названия)
                     WorkMas._dmas = new int[_cfg.RowLength, _cfg.ColumnLength];
                 }
                 else MessageBox.Show("Для отображения таблицы необходимо синхронизировать данные", "Ошибка", MessageBoxButton.OK,
@@ -94,11 +98,10 @@ namespace PW13
         {
             e.Handled = "1234567890".IndexOf(e.Text) < 0;
         }
-
         private void TryTip_Click(object sender, RoutedEventArgs e)
         {
             _savedcfg = false;
-            if (TryTip.IsChecked == true) _cfg.TryTip = true;
+            if (TryTip.IsChecked == true) _cfg.TryTip = true;//Синхронизация значений галочки со свойством 
             else _cfg.TryTip = false;
         }
 
@@ -116,8 +119,8 @@ namespace PW13
                     "предыдущего состояния, так как вы не нажали клавишу сохранить.", "Сохранение и выход", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
-                    RoutedEventArgs ie = new RoutedEventArgs();
-                    SaveCfg_Click(sender, ie);
+                    RoutedEventArgs aEvent = new RoutedEventArgs();
+                    SaveCfg_Click(sender, aEvent);
                 }
                 if (result == MessageBoxResult.Cancel) e.Cancel = true;
             }
