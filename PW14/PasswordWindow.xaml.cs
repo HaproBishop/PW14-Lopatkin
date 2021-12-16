@@ -31,7 +31,11 @@ namespace PW13
                 _enter = true;
                 Close();
             }
-            else MessageBox.Show("Неправильно введен пароль, повторите попытку снова", "Ошибка авторизации", MessageBoxButton.OK, MessageBoxImage.Error);
+            else
+            {
+                MessageBox.Show("Неправильно введен пароль, повторите попытку снова", "Ошибка авторизации", MessageBoxButton.OK, MessageBoxImage.Error);
+                PasswordLine.Focus();
+            }
         }
 
         private void Window_Closed(object sender, EventArgs e)
