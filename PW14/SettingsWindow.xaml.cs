@@ -74,13 +74,20 @@ namespace PW13
 
         private void LoadCfg_Click(object sender, RoutedEventArgs e)
         {
-            if (_cfg.RowLength == Convert.ToInt32(RowLength.Text) && _cfg.ColumnLength == Convert.ToInt32(ColumnLength.Text))
+            try
             {
-                _loadedcfg = true;
-                WorkMas._dmas = new int[_cfg.RowLength, _cfg.ColumnLength];
+                if (_cfg.RowLength == Convert.ToInt32(RowLength.Text) && _cfg.ColumnLength == Convert.ToInt32(ColumnLength.Text))
+                {
+                    _loadedcfg = true;
+                    WorkMas._dmas = new int[_cfg.RowLength, _cfg.ColumnLength];
+                }
+                else MessageBox.Show("Для отображения таблицы необходимо синхронизировать данные", "Ошибка", MessageBoxButton.OK,
+                    MessageBoxImage.Stop);
             }
-            else MessageBox.Show("Для отображения таблицы необходимо синхронизировать данные", "Ошибка", MessageBoxButton.OK,
-                MessageBoxImage.Stop);
+            catch
+            {
+                MessageBox.Show("Введите число!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void RowLength_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -95,10 +102,6 @@ namespace PW13
             else _cfg.TryTip = false;
         }
 
-        private void Exit_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
 
         private void RowLength_TextChanged(object sender, TextChangedEventArgs e)
         {

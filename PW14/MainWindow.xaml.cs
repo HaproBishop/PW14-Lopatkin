@@ -62,7 +62,7 @@ namespace PW13
                 TableLength.Text = "Таблица не создана";
             }
         }
-        public static bool _closewithoutmessage;
+        public static bool _closeWithoutMessage;
         /// <summary>
         /// Шаблонное открытие таблицы
         /// </summary>
@@ -398,7 +398,7 @@ namespace PW13
         }
         private void MainWin_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!_closewithoutmessage)
+            if (!_closeWithoutMessage)
             {
                 MessageBoxResult result = MessageBox.Show("Вы точно хотите выйти из программы?", "Закрытие программы", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes) e.Cancel = false;
@@ -410,7 +410,7 @@ namespace PW13
         {
             SettingsWindow settingswin = new SettingsWindow();
             settingswin.Owner = this;
-            settingswin.ShowDialog();
+            settingswin.ShowDialog(); 
             if (settingswin._loadedcfg)
             {
                 CountRows.Text = WorkMas._dmas.GetLength(0).ToString();

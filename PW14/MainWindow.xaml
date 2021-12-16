@@ -6,9 +6,6 @@
         xmlns:local="clr-namespace:PW13"
         mc:Ignorable="d"
         Title="Таблица Элементов" ResizeMode="CanResize" Icon="LogoIco.ico" KeyDown="MainWin_KeyDown" WindowStartupLocation="CenterScreen" MinHeight="600" MinWidth="800" Height="Auto" Width="Auto" Loaded="MainWin_Loaded" Closing="MainWin_Closing">
-    <Window.Resources>
-        
-    </Window.Resources>
     <Grid>
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">

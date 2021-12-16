@@ -38,7 +38,7 @@ namespace PW13
         {
             if (!_enter)
             {
-                MainWindow._closewithoutmessage = true;
+                MainWindow._closeWithoutMessage = true;
                 Owner.Close();
             }
         }

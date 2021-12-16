@@ -18,6 +18,6 @@
         </DockPanel>
         <Button x:Name="SaveCfg" FontSize="12" Content="Сохранить конфигурацию таблицы" Click="SaveCfg_Click" IsDefault="True" Margin="3" DockPanel.Dock="Top"/>
         <Button x:Name="LoadCfg" FontSize="12" Content="Загрузить конфигурацию таблицы" Margin="3" ToolTip="Используется при необходимости обновить текущую таблицу согласно конфигурации" Click="LoadCfg_Click" DockPanel.Dock="Top"/>
-        <Button x:Name="Exit" FontSize="12" Content="Выход" IsCancel="True" Click="Exit_Click" Margin="3" DockPanel.Dock="Top"/>
+        <Button x:Name="Exit" FontSize="12" Content="Выход" IsCancel="True" Margin="3" DockPanel.Dock="Top"/>
     </DockPanel>
 </Window>
