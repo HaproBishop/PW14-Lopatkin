@@ -23,7 +23,7 @@ namespace PW13
         {
             InitializeComponent();            
         }
-        bool _enter;
+        bool _enter;//Проверка на закрытие окна при успешном вводе
         private void Enter_Click(object sender, RoutedEventArgs e)
         {
             if (PasswordLine.Password == "123")

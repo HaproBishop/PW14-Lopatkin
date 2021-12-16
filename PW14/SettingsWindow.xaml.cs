@@ -27,9 +27,9 @@ namespace PW13
         }
         public bool _loadedcfg;
         Configuration _cfg;
-        bool _savedcfg;       
+        bool _savedcfg;
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
+        {            
             _cfg = new Configuration();
             _cfg.LoadConfig();            
             RowLength.Text = _cfg.RowLength.ToString();
@@ -69,7 +69,7 @@ namespace PW13
                 ColumnLength.Text = _cfg.ColumnLength.ToString();
                 RowLength.Text = _cfg.RowLength.ToString();                
             }
-            _savedcfg = true;
+            _savedcfg = true;            
         }
 
         private void LoadCfg_Click(object sender, RoutedEventArgs e)
@@ -97,8 +97,7 @@ namespace PW13
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
-            BeforeExit();
-            if (_savedcfg) Close();
+            Close();
         }
 
         private void RowLength_TextChanged(object sender, TextChangedEventArgs e)
@@ -108,20 +107,16 @@ namespace PW13
 
         private void SettingsWin_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            BeforeExit();
-        }
-        private void BeforeExit()
-        {
-            if(!_savedcfg)
+            if (!_savedcfg)
             {
                 MessageBoxResult result = MessageBox.Show("Хотите сохранить изменения перед выходом? Настройки сбросятся до " +
-                    "предыдущего состояния, так как вы не нажали клавишу сохранить.", "Сохранение и выход", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    "предыдущего состояния, так как вы не нажали клавишу сохранить.", "Сохранение и выход", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
-                    RoutedEventArgs e = new RoutedEventArgs();
-                    object sender = new object();
-                    SaveCfg_Click(sender, e);
+                    RoutedEventArgs ie = new RoutedEventArgs();
+                    SaveCfg_Click(sender, ie);
                 }
+                if (result == MessageBoxResult.Cancel) e.Cancel = true;
             }
         }
     }
