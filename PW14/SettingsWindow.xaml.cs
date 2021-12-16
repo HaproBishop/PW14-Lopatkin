@@ -31,7 +31,7 @@ namespace PW13
          /// </summary>
         public bool _loadedСfg;
         Configuration _cfg;//Переменная конфигурации описана
-        bool _savedcfg;//Проверка на выполненное сохранение конфига, которая используется перед выходом из окна настроек
+        bool _savedСfg;//Проверка на выполненное сохранение конфига, которая используется перед выходом из окна настроек
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {            
             _cfg = new Configuration();
@@ -51,7 +51,7 @@ namespace PW13
                 SaveCfg_Click(sender, e);
             }
             TryTip.IsChecked = _tryTipFromFile = _cfg.TryTip;
-            _savedcfg = true;//Задание true для отсутствия вопроса при закрытии программы
+            _savedСfg = true;//Задание true для отсутствия вопроса при закрытии программы
         }
 
         private void SaveCfg_Click(object sender, RoutedEventArgs e)
@@ -70,7 +70,7 @@ namespace PW13
                 ColumnLength.Text = _cfg.ColumnLength.ToString();
                 RowLength.Text = _cfg.RowLength.ToString();                
             }
-            _savedcfg = true;            
+            _savedСfg = true;            
         }
 
         private void LoadCfg_Click(object sender, RoutedEventArgs e)
@@ -95,26 +95,28 @@ namespace PW13
         {
             e.Handled = "1234567890".IndexOf(e.Text) < 0;
         }
-        bool _tryTipFromFile;
-        bool _previousSavedCfg;
+        bool _tryTipFromFile;//Повторить подсказку из файла (дословный перевод по логике разработчика)
+        bool _previousSavedCfg;//Предыдущее состояние конфига перед вызовом события TryTip_Click(задается относительно условия ниже)
         private void TryTip_Click(object sender, RoutedEventArgs e)
         {
-            if(_previousSavedCfg == false && _savedcfg == true) _previousSavedCfg = _savedcfg;
-            _savedcfg = false;
+            if(_previousSavedCfg == false && _savedСfg == true) _previousSavedCfg = _savedСfg;//Задание предыдущего состояние, если требуется
+                                                                                              //P.S.Логика: если не было изменений(true), то _savedCfg требует восстановление, с учетом)
+        //Проверяется _previousSavedCfg на наличие false, чтобы не делать лишнего присваивания 
+            _savedСfg = false;
             if (TryTip.IsChecked == true) _cfg.TryTip = true;//Синхронизация значений галочки со свойством 
             else _cfg.TryTip = false;
-            if (_previousSavedCfg && TryTip.IsChecked == _tryTipFromFile) _savedcfg = true;
+            if (_previousSavedCfg && TryTip.IsChecked == _tryTipFromFile) _savedСfg = true;
         }
 
 
         private void RowLength_TextChanged(object sender, TextChangedEventArgs e)
         {
-            _previousSavedCfg = _savedcfg = false;
-        }
+            _previousSavedCfg = _savedСfg = false;//Изменение значений при изменении полей строк и столбцов
+        }//При сохранении true для _savedCfg, а _previousSavedCfg оставляет текущее значение для следующей установки галочки
 
         private void SettingsWin_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!_savedcfg)
+            if (!_savedСfg)
             {
                 MessageBoxResult result = MessageBox.Show("Хотите сохранить изменения перед выходом? Настройки сбросятся до " +
                     "предыдущего состояния, так как вы не нажали клавишу сохранить.", "Сохранение и выход", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
