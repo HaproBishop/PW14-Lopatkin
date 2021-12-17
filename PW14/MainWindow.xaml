@@ -98,7 +98,7 @@
         <GridSplitter HorizontalAlignment="Left" Grid.Column="1" Grid.Row="2" Width="3" Background="Black" Panel.ZIndex="1"/>
         <GroupBox Header="Исходные данные" Grid.Row="2">
             <Grid>
-                <DataGrid x:Name="VisualTable" CellEditEnding="VisualTable_CellEditEnding" PreviewTextInput="VisualTable_PreviewTextInput" CanUserAddRows="False" CanUserDeleteRows="False" TabIndex="-1">
+                <DataGrid x:Name="VisualTable" CellEditEnding="VisualTable_CellEditEnding" PreviewTextInput="VisualTable_PreviewTextInput" CanUserAddRows="False" CanUserDeleteRows="False" TabIndex="-1" BeginningEdit="VisualTable_BeginningEdit">
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem x:Name="AddColumnContextMenu" Header="Добавить столбец" Click="AddColumn_Click"/>

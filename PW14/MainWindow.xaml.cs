@@ -19,6 +19,7 @@ using VisualTable;
 using FindCountMoreAvgColumnLibrary;
 using System.Windows.Threading;
 using LibraryOfConfigurationForVisualTableSettings;
+using System.Data;
 //Практическая работа №13. Лопаткин Сергей ИСП-31
 //Задание №8. Дана матрица размера M * N. В каждом ее столбце найти количество элементов, 
 //больших среднего арифметического всех элементов этого столбца
@@ -223,7 +224,6 @@ namespace PW13
         /// <param name="e"></param>
         private void VisualTable_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            object cell = VisualTable.SelectedItem;//Зарезервированное значение ячейки до изменения
             int iRow = e.Row.GetIndex();
             int iColumn = e.Column.DisplayIndex;
             bool tryedit = int.TryParse(((TextBox)e.EditingElement).Text, out int value);
@@ -237,11 +237,11 @@ namespace PW13
             {
                 MessageBox.Show("Ошибка. Необходимо ввести число, а не символ.", "Ошибка", MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                VisualTable.SelectedItem = cell;//Возвращение значения ячейки при неверном вводе
+                ((TextBox)e.EditingElement).Text = cell;//Возвращение значения ячейки при неверном вводе
             }
             if (e.EditAction == DataGridEditAction.Cancel)
             {
-                VisualTable.SelectedItem = cell;//Возвращение значения перед изменениями, если была произведена отмена
+                ((TextBox)e.EditingElement).Text = cell;//Возвращение значения перед изменениями, если была произведена отмена
             }
         }
         //Переключение дефолта относительно полученного фокуса
@@ -442,6 +442,14 @@ namespace PW13
             CountRows.Text = WorkMas._dmas.GetLength(0).ToString();
             CountColumns.Text = WorkMas._dmas.GetLength(1).ToString();
             CreateMas_Click(sender, e);
+        }
+        string cell;
+        private void VisualTable_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            int iColumn = e.Column.DisplayIndex;
+            int iRow = e.Row.GetIndex();
+            DataRowView row = (DataRowView)VisualTable.Items[iRow];
+            cell = row[iColumn].ToString();
         }
     }
 }
