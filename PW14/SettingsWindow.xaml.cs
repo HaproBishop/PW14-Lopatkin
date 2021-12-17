@@ -99,13 +99,13 @@ namespace PW13
         bool _previousSavedCfg;//Предыдущее состояние конфига перед вызовом события TryTip_Click(задается относительно условия ниже)
         private void TryTip_Click(object sender, RoutedEventArgs e)
         {
-            if(_previousSavedCfg == false && _savedСfg == true) _previousSavedCfg = _savedСfg;//Задание предыдущего состояние, если требуется
+            if((!_previousSavedCfg) && _savedСfg) _previousSavedCfg = _savedСfg;//Задание предыдущего состояние, если требуется
                                                                                               //P.S.Логика: если не было изменений(true), то _savedCfg требует восстановление, с учетом)
         //Проверяется _previousSavedCfg на наличие false, чтобы не делать лишнего присваивания 
             _savedСfg = false;
             if (TryTip.IsChecked == true) _cfg.TryTip = true;//Синхронизация значений галочки со свойством 
             else _cfg.TryTip = false;
-            if (_previousSavedCfg && TryTip.IsChecked == _tryTipFromFile) _savedСfg = true;
+            if (_previousSavedCfg && (TryTip.IsChecked == _tryTipFromFile)) _savedСfg = true;
         }
 
 
@@ -113,6 +113,7 @@ namespace PW13
         {
             _previousSavedCfg = _savedСfg = false;//Изменение значений при изменении полей строк и столбцов
         }//При сохранении true для _savedCfg, а _previousSavedCfg оставляет текущее значение для следующей установки галочки
+    
 
         private void SettingsWin_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
