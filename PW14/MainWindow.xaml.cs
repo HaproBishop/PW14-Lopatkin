@@ -239,10 +239,6 @@ namespace PW13
                     MessageBoxImage.Error);
                 ((TextBox)e.EditingElement).Text = cell;//Возвращение значения ячейки при неверном вводе
             }
-            if (e.EditAction == DataGridEditAction.Cancel)
-            {
-                ((TextBox)e.EditingElement).Text = cell;//Возвращение значения перед изменениями, если была произведена отмена
-            }
         }
         //Переключение дефолта относительно полученного фокуса
         private void Range_GotFocus(object sender, RoutedEventArgs e)
